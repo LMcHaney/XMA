@@ -1,0 +1,27 @@
+% Average Step Height Computation
+Windowsize = 5;
+b = (1/Windowsize)*ones(1,Windowsize);
+a = 1;
+Data = xlsread("01-01-Test (1).csv");
+Data(1:16,:) = [];
+Data = Data(:,2:end);
+Data = filloutliers(Data,'linear');
+Data = smoothdata(Data);
+Data = filter(b,a,Data,[],2);
+Data = filloutliers(Data,'linear');
+Data = smoothdata(Data);
+row_1 = Data(1,:);
+x1 = linspace(1,length(row_1),length(row_1));
+Avmax = zeros(1,length(x1));
+Avmin = zeros(1,length(x1));
+step_height = zeros(1,length(x1));
+for i=1:length(x1)
+    row = Data(i,:);
+    row = smoothdata(row);
+    [max_i,hidx] = max(row);
+    [min_i,lidx] = min(row);
+    Avmax(i) = mean(row(1:hidx));
+    Avmin(i) = mean(row(hidx+1:end));
+    step_height(i) = Avmax(i)-Avmin(i);
+end
+Av_step_height = mean(step_height);
