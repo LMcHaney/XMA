@@ -1,0 +1,17 @@
+%%%% Trying to Sequencially step through data
+cd = 'C:\Users\lmchaney\desktop\Logan Thin Film Analysis\ Si Run 1 Data'; % computer directory
+fds = fileDatastore('*.csv','ReadFcn',@importdata); % finds file data 
+fullfileNames = fds.Files; % gives file directory/name
+numfiles = length(fullfileNames); % number of files
+for k = 1:length(numfiles)
+    % getting files name 
+    a = struct2cell(dir(fullfileNames{k})) ;
+    a = a(1);
+    a = string(a);
+    % loading data
+    b = xlsread(a);
+    % data analsysis for all files
+    % how many cuts? 
+    % how to troubleshoot? 
+    % NEED to subtract slope/ find peaks/ determine thickness. 
+end
