@@ -1,17 +1,89 @@
 %%%% Trying to Sequencially step through data
-cd = 'C:\Users\lmchaney\desktop\Logan Thin Film Analysis\ Si Run 1 Data'; % computer directory
+% cd = 'C:\Users\lmchaney\desktop\Logan Thin Film Analysis\ Si Run 1 Titled CSV';%  work computer directory
+cd = 'C:\Users\Logan\documents\Senior Design\Si Run 2 Tilted CSV'; % personal computer directory
 fds = fileDatastore('*.csv','ReadFcn',@importdata); % finds file data 
 fullfileNames = fds.Files; % gives file directory/name
 numfiles = length(fullfileNames); % number of files
-for k = 1:length(numfiles)
+j=1; %j index for plotting
+n = 29;
+% n = 50;
+% for k = 1:length(fullfileNames)
+f1 = 1;
+f2 = 1; 
+for k = n
     % getting files name 
-    a = struct2cell(dir(fullfileNames{k})) ;
-    a = a(1);
+    ah = struct2cell(dir(fullfileNames{k})) ;
+    a = ah(1);
     a = string(a);
     % loading data
     b = xlsread(a);
+    %
+    b(1:16,:)=[];
+    measurement_length = round(b(end,1));
+    b = rot90(b);
+    x = 1:length(b(1,:));
+    CL = length(b(:,1)); % coversion length
+    CF = CL/measurement_length; % conversion factor
     % data analsysis for all files
     % how many cuts? 
     % how to troubleshoot? 
-    % NEED to subtract slope/ find peaks/ determine thickness. 
+    % NEED to subtract slope/ mean top and bottom/ determine thickness. 
+
+    % Cross Sections of Each File
+    L = length(b);
+    csec_total = 10;
+    csec_int = round(L/csec_total);
+    csec_idx = 2;
+    %
+    for i = 1:csec_total
+        csec = b(csec_idx,:);
+        csec_idx = csec_idx+csec_int;
+        [pks,locs,w,p] = findpeaks(csec);
+        [v,h] = find(p==max(p));
+        r = locs(h);
+        % plotting purposes
+%         figure(k) % for all data sets
+        figure(1) % use for analyzing 1 set at a time
+        subplot(2,5,j) % will only work for 1 data set at a time
+        plot(x,csec)
+        hold on 
+        plot(x(r),csec(r),'ro')
+        j=j+1;
+        total(i,:) = csec;
+    end
+%     idx = find(h_diff<mean(h_diff/1.5));
+%     h_diff(idx) = [];
 end
+
+%% 
+line1 = total(1,:);
+line2 = total(2,:);
+line3 = total(3,:);
+line4 = total(4,:);
+line5 = total(5,:);
+line6 = total(6,:);
+line7 = total(7,:);
+line8 = total(8,:);
+line9 = total(9,:);
+line10 = total(10,:);
+
+%indexing
+
+li = [1 1 530 552 550 617 567 596 598 623];
+ri = [1 1 720 714 699 699 699 690 677 744];
+
+%step 
+
+step(1) = abs(line1(li(1))-line1(ri(1)));
+step(2) = abs(line2(li(2))-line2(ri(2)));
+step(3) = abs(line3(li(3))-line3(ri(3)));
+step(4) = abs(line4(li(4))-line4(ri(4)));
+step(5) = abs(line5(li(5))-line5(ri(5)));
+step(6) = abs(line6(li(6))-line6(ri(6)));
+step(7) = abs(line7(li(7))-line7(ri(7)));
+step(8) = abs(line8(li(8))-line8(ri(8)));
+step(9) = abs(line9(li(9))-line9(ri(9)));
+step(10) = abs(line10(li(10))-line10(ri(10)));
+
+d = find(step==0);
+step(d) = [];
