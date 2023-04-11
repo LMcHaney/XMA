@@ -87,3 +87,28 @@ step(10) = abs(line10(li(10))-line10(ri(10)));
 
 d = find(step==0);
 step(d) = [];
+
+%% circle stuff
+disc_measurement = [0 1.5 3 4.5 6]; % these are the length in inches from the center of disc
+v = [0.021 0.028 0.029 0.030 0.0305]; % thickness values at x values
+q = linspace(disc_measurement(1), disc_measurement(end), 25); % creates a new array with 25 points
+xq = interp1(disc_measurement,v,q,'spline');
+yq=xq';
+% xq = flip(xq);
+
+dum1 = zeros(length(yq),length(xq)); % creates square array of the dimensions of quarter circle
+
+for h=1:length(xq)
+    dum1(h,1) = xq(h);
+    dum1(1,h) = xq(h);
+end
+c = 2;
+dum1(2,2)=xq(2);
+ for idx = 3:length(dum1)
+    dum1(idx, idx)=xq(idx);
+    dum1(idx,:)=xq(idx);
+    dum1(:,idx)=xq(idx);
+ end
+
+ figure 
+ imagesc(dum1)
